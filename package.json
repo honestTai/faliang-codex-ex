@@ -1,0 +1,19 @@
+{
+  "name": "faliang-codex-ex",
+  "version": "0.1.0",
+  "description": "Codex writes and checks WeChat articles, WeMD reviews Markdown locally, and the official WeChat API creates approved drafts.",
+  "type": "module",
+  "scripts": {
+    "article:new": "node scripts/new-article.mjs",
+    "handoff:wemd": "node scripts/handoff-wemd.mjs",
+    "render:wechat-html": "node scripts/render-styled-wechat-html.mjs",
+    "save:wemd-html": "node scripts/save-wemd-html-from-clipboard.mjs",
+    "check": "node scripts/check-workflow.mjs",
+    "preview:wechat": "node scripts/preview-wechat-draft.mjs",
+    "publish:draft": "node scripts/publish-draft.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

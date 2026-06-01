@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.local
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+articles/**/.wemd-cache/
+outputs/
+.tools/
+.cache/
+archive/
+tmp/
+dist/
+build/
