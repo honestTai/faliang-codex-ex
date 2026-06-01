@@ -262,7 +262,7 @@ function firstRealValue(...values) {
   for (const value of values) {
     const text = String(value || "").trim();
     if (!text) continue;
-    if (/^(your_|你的|wx1234567890abcdef|your_wechat_|your_app_secret)/i.test(text)) continue;
+    if (/^(your_|你的|your_wechat_|your_app_secret|example_|placeholder_)/i.test(text)) continue;
     return text;
   }
   return "";
