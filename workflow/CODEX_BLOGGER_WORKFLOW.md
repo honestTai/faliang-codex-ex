@@ -1,16 +1,14 @@
 # Codex 版公众号主流程
 
-目标是复刻这篇文章里的公众号写作流程：
-
-<https://mp.weixin.qq.com/s/xsgPv6jRWwVn6Ea1TEC_4Q>
-
-这里把 Claude Code 换成 Codex，并保留 WeMD 作为本地审稿和排版预览环节。
+目标是把日常公众号写作固定成一条自己的本地流程：Codex 写稿和核验，WeMD 做本地审稿和排版预览，人工确认后再进公众号草稿箱。
 
 不要把这个仓库扩展成一堆互不相干的内容工厂。默认只走下面这条线：
 
 ```text
 素材 -> Codex 初稿 -> 事实核验 -> 封面和配图 -> WeMD 审稿 -> HTML -> 公众号草稿箱
 ```
+
+这个流程仓库不保留准备发布的文章稿件；真实发布稿放到实际写作仓库，例如 `codex-wemd-md2wechat-workflow`。
 
 ## 8 步主流程
 
@@ -65,10 +63,10 @@ assets/covers/<slug>.jpg
 
 ### Step 7: WeMD 审稿
 
-Codex 先完成三件事：
+Codex 先完成这些事：
 
 - 整理 Markdown 结构、标题、摘要和分段。
-- 删除空泛赞美、模板化转折和明显 AI 腔。
+- 按 `humanizer-zh` 删掉空词、模板化转折、机械总结和没有证据的判断。
 - 确认图片路径可以被 handoff 脚本内联。
 
 然后运行：
