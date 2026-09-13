@@ -1,10 +1,21 @@
-# faliang-codex-ex
+<div align="center">
 
-一个用 Codex 写公众号文章、用 WeMD 本地审稿排版、再通过微信官方接口创建草稿箱草稿的轻量工作流。
+# WeChat Writing Workflow · 公众号写作工作流
 
-它的目标很克制：把日常公众号写作固定成一条可检查、可预览、可确认的本地流程。Codex 负责写稿和核验，WeMD 保留为本地审稿和排版预览环节。
+**从素材到公众号草稿，把写作流程接起来。**  
+**Connect the steps from source material to a WeChat draft.**
 
-保留 WeMD 的原因很简单：公众号文章最后还是要看版式、看图片、看手机阅读节奏。Codex 负责写稿和检查，WeMD 负责本地预览和微调，脚本只在你确认后把最终稿送进公众号草稿箱。
+[环境准备 / Setup](#环境准备) · [GitHub](https://github.com/honestTai/faliang-codex-ex) · [HRouter](https://hrouter.net/home)
+
+</div>
+
+让 Codex 帮你整理初稿，在 WeMD 中审稿与调整排版，确认后再通过微信官方接口创建草稿，减少来回复制与转换。
+
+Draft with Codex, review and format in WeMD, then create a draft through the official WeChat API after confirmation.
+
+**适合谁 / Who it’s for**  
+用 Codex 辅助写作、希望保留人工审稿与排版环节的公众号作者。  
+WeChat authors using Codex who want to keep human review and layout checks in the workflow.
 
 ```text
 素材 -> Codex 初稿 -> 事实核验 -> 封面和配图 -> WeMD 审稿 -> HTML -> 公众号草稿箱
@@ -196,3 +207,16 @@ npm.cmd run publish:draft -- --article articles/approved/article-slug.md --cover
 - WeMD: <https://github.com/tenngoxars/WeMD>
 
 本仓库只保留 WeMD 的最小元数据和许可证，完整源码请从上游获取。
+
+## 作者与 HRouter · About the author
+
+我是 **honestTai**，开发工具，也运营 [HRouter](https://hrouter.net/home)。这里持续分享实用代码、AI 应用、Skills 与插件，把工作中的需求变成可复用的项目。  
+I’m **honestTai**, the developer and operator behind HRouter. I share practical code, AI apps, skills, and plugins built around real workflows.
+
+此工作流使用你在 Codex 环境中的模型。HRouter 是我同时运营的模型路由服务，面向 AI 编程与应用开发。  
+This workflow uses the model in your Codex environment. HRouter is another part of my work: a model-routing service for AI coding and applications.
+
+[了解 HRouter · Explore HRouter](https://hrouter.net/home) · [发现更多项目 · More projects](https://github.com/honestTai)
+
+**觉得有用，欢迎 Star；有想法，欢迎到 Issues 交流。**  
+**Star the project if it helps, and share your ideas in Issues.**
