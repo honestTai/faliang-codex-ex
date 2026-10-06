@@ -1,60 +1,42 @@
 <div align="center">
 
-# WeChat Writing Workflow · 公众号写作工作流
+**English** · [简体中文](README.zh-CN.md)
 
-**从素材到公众号草稿，把写作流程接起来。**  
-**Connect the steps from source material to a WeChat draft.**
-
-[环境准备 / Setup](#环境准备) · [GitHub](https://github.com/honestTai/faliang-codex-ex) · [HRouter](https://hrouter.net/home)
+[HRouter](https://hrouter.net/home) · [All public projects](https://github.com/honestTai) · [Star & Fork trends](#project-activity)
 
 </div>
 
-让 Codex 帮你整理初稿，在 WeMD 中审稿与调整排版，确认后再通过微信官方接口创建草稿，减少来回复制与转换。
+[![Repository summary](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/badges/faliang-codex-ex.svg)](#project-activity)
 
-Draft with Codex, review and format in WeMD, then create a draft through the official WeChat API after confirmation.
+# WeChat Writing Workflow
 
-**适合谁 / Who it’s for**  
-用 Codex 辅助写作、希望保留人工审稿与排版环节的公众号作者。  
-WeChat authors using Codex who want to keep human review and layout checks in the workflow.
+**Connect the steps from source material to a reviewed WeChat draft.**
+
+Draft with Codex, fact-check the content, review and format in WeMD, then create a draft through the official WeChat API **after human confirmation**. For WeChat Official Account authors who want to keep editorial and layout review in the workflow.
 
 ```text
-素材 -> Codex 初稿 -> 事实核验 -> 封面和配图 -> WeMD 审稿 -> HTML -> 公众号草稿箱
+Sources → Codex draft → Fact-check → Cover and images → WeMD review → HTML → WeChat draft box
 ```
 
-## 适合做什么
+## What this repository contains
 
-- 从真实素材整理公众号初稿。
-- 用 WeMD 本地检查排版效果。
-- 把图片内联到 WeMD 审稿稿，减少图片丢失。
-- 生成带内联样式的公众号 HTML。
-- 通过微信官方 API 创建草稿箱草稿。
+- Reusable workflows, scripts, and prompts for writing and review.
+- Local WeMD handoff with embedded images to reduce missing-image problems.
+- WeChat-ready HTML with inline styles.
+- Draft-box creation through the official WeChat API; **not a mass-publishing workflow**.
 
-这个仓库不提供选题素材，也不内置特定账号的内容模板。文章结构需要按内容类型选择：教程、工具介绍、案例复盘、观点文、活动说明、产品介绍都可以走同一条发布流水线，但不能套同一种写法。
+This repository does not supply article topics, account-specific content templates, or articles waiting to be published. Keep real drafts and final articles in your own writing repository. Tutorials, tool introductions, retrospectives, opinion pieces, announcements, and product articles can share a pipeline, but should not share one rigid writing template.
 
-这个仓库只保留流程、脚本和提示词，不存放准备发布的文章稿件。要发布的草稿、WeMD 审稿稿和最终稿，放到 `codex-wemd-md2wechat-workflow` 这类实际写作仓库里。
+## Setup
 
-## 环境准备
-
-需要：
-
-- Node.js 20 或更高版本。
-- Codex。
-- WeMD 本地客户端。
-- 一个可以使用公众号草稿接口的微信公众号。
-
-克隆后安装依赖：
+You need Node.js 20+, Codex, the local WeMD client, and a WeChat Official Account with access to the draft API.
 
 ```powershell
 npm install
-```
-
-复制配置文件：
-
-```powershell
 Copy-Item .env.example .env
 ```
 
-填写：
+Configure locally:
 
 ```text
 WECHAT_APPID=
@@ -63,160 +45,98 @@ PUBLIC_ACCOUNT_AUTHOR=
 PUBLIC_ACCOUNT_SOURCE_URL=
 ```
 
-`.env` 不要提交。微信接口还可能要求公众号权限、IP 白名单和已认证账号状态。
+Never commit `.env`. API access can also depend on account permissions, verification status, and an IP allowlist.
 
-## 目录结构
+## Workspace structure
 
 ```text
 articles/
-  drafts/          # Codex 写作和修改的草稿
-  wemd-inbox/      # 交给 WeMD 审稿的副本，图片会转成 data URI
-  approved/        # 人工确认后的最终 Markdown
-  approved-html/   # 生成或保存的公众号 HTML
+  drafts/          # Drafts written and revised with Codex
+  wemd-inbox/      # Review copies with local images converted to data URIs
+  approved/        # Human-approved final Markdown
+  approved-html/   # Generated or saved WeChat HTML
 assets/
-  covers/          # 公众号封面图
-prompts/           # Codex、WeMD、发布阶段提示词
-scripts/           # 新建文章、交接 WeMD、渲染 HTML、预览、创建草稿
-workflow/          # 固定发布流水线和检查规则
-sources/WeMD/      # WeMD 上游元数据和许可证
+  covers/          # Cover images
+prompts/           # Writing, review, and draft-publication prompts
+scripts/           # Article creation, handoff, rendering, preview, draft creation
+workflow/          # Pipeline and validation rules
+sources/WeMD/      # Upstream metadata and license
 ```
 
-## 使用步骤
+## From sources to draft box
 
-### 1. 准备素材
+### 1. Gather real sources
 
-一个选题一个目录。素材可以是笔记、采访记录、网页链接、产品说明、截图、数据表或你自己写的原始内容。
+Use one source directory per topic: notes, interviews, links, screenshots, product information, or data. Mark gaps instead of inventing facts.
 
-不要让 Codex 凭空写事实。没有素材的地方，宁愿保留待补充。
-
-### 2. 创建草稿
+### 2. Create and write a draft
 
 ```powershell
-npm.cmd run article:new -- --title "文章标题" --slug article-slug
+npm.cmd run article:new -- --title "Article title" --slug article-slug
 ```
 
-草稿会生成到：
+The file is created at `articles/drafts/article-slug.md`. Give Codex the sources and follow `prompts/codex-writing.md` and `workflow/CONTENT_PIPELINE.md`. State the article type, source provenance, and facts that must be checked.
 
-```text
-articles/drafts/article-slug.md
-```
+### 3. Fact-check and add images
 
-### 3. 让 Codex 写初稿
+Verify the title, summary, names, dates, data, capability claims, links, and screenshot meaning. The workflow recommends a `humanizer-zh` pass for Chinese prose: remove filler and unsupported conclusions, without weakening factual accuracy.
 
-把素材交给 Codex，让它按 `prompts/codex-writing.md` 和 `workflow/CONTENT_PIPELINE.md` 写稿。
+Place the cover at `assets/covers/article-slug.jpg`. Body images may use relative paths; handoff converts local images to data URIs.
 
-建议每次都明确三件事：
-
-- 这篇文章是什么类型。
-- 素材来自哪里。
-- 哪些内容必须核验，哪些内容不能编。
-
-### 4. 核验和补图
-
-检查标题、摘要、人物、时间、数据、产品能力、外部链接和截图含义。
-
-成稿前按 `humanizer-zh` 过一遍：删掉空词、模板化转折、机械总结和没有证据的判断。没有素材支撑的地方，不写成确定事实。
-
-封面放到：
-
-```text
-assets/covers/article-slug.jpg
-```
-
-正文图片可以先用相对路径引用。交给 WeMD 前，脚本会把本地图片转成 Markdown data URI。
-
-### 5. 交给 WeMD 审稿
+### 4. Review in WeMD
 
 ```powershell
 npm.cmd run handoff:wemd -- articles/drafts/article-slug.md
 ```
 
-然后用 WeMD 打开：
+Open `articles/wemd-inbox/article-slug.md` in WeMD. Check layout, images, paragraphs, and mobile readability.
 
-```text
-articles/wemd-inbox/article-slug.md
-```
+### 5. Approve, render, and preview
 
-你在 WeMD 里检查排版、图片、段落和移动端阅读效果。
-
-### 6. 人工确认最终稿
-
-确认后，把最终 Markdown 放到：
-
-```text
-articles/approved/article-slug.md
-```
-
-只有 `articles/approved/` 下的稿件才允许进入公众号草稿箱流程。
-
-### 7. 生成公众号 HTML
+After human approval, put the final Markdown in `articles/approved/article-slug.md`.
 
 ```powershell
 npm.cmd run render:wechat-html -- --article articles/approved/article-slug.md
-```
-
-输出：
-
-```text
-articles/approved-html/article-slug.html
-```
-
-脚本会生成带内联样式的 HTML，避免把裸 `<p>`、`<h2>`、`figure` 直接推到公众号。
-
-### 8. 预览检查
-
-```powershell
 npm.cmd run preview:wechat -- --article articles/approved/article-slug.md
 ```
 
-这一步检查元数据、HTML 路径、摘要长度和图片数量。
+HTML is written to `articles/approved-html/article-slug.html` with inline styles. Preview checks metadata, HTML paths, summary length, and image counts.
 
-### 9. 创建公众号草稿箱草稿
-
-确认无误后再运行：
+### 6. Create the draft after confirmation
 
 ```powershell
 npm.cmd run publish:draft -- --article articles/approved/article-slug.md --cover assets/covers/article-slug.jpg --confirmed
 ```
 
-默认只创建草稿箱草稿，不群发。
+This creates a draft, not a broadcast. Review the resulting draft in the Official Account backend, including originality, tips, comments, collections, source links, content provenance, recommendations, and reposting settings.
 
-草稿创建后，还要进入公众号后台检查底部设置：原创声明、赞赏、留言、合集、原文链接、创作来源、平台推荐和快捷转载。
-
-## 常用命令
+## Checks and safety
 
 ```powershell
 npm.cmd run check
-npm.cmd run article:new -- --title "文章标题" --slug article-slug
-npm.cmd run handoff:wemd -- articles/drafts/article-slug.md
-npm.cmd run render:wechat-html -- --article articles/approved/article-slug.md
-npm.cmd run preview:wechat -- --article articles/approved/article-slug.md
-npm.cmd run publish:draft -- --article articles/approved/article-slug.md --cover assets/covers/article-slug.jpg --confirmed
 ```
 
-## 安全边界
+- Draft creation is restricted to `articles/approved/` and requires human confirmation.
+- Covers must come from `assets/covers/`.
+- Do not commit secrets, tokens, API response logs, caches, or local tool directories.
+- No third-party Markdown-to-WeChat service is used; locally rendered or WeMD-produced HTML goes to the official API.
 
-- 未经人工确认，不从草稿目录创建公众号草稿。
-- `publish:draft` 只允许处理 `articles/approved/`。
-- 封面只允许来自 `assets/covers/`。
-- `.env`、token、接口响应日志、缓存和本地工具目录不提交。
-- 不接入第三方 Markdown 转公众号服务；正文 HTML 由本地脚本或 WeMD 产物进入官方接口。
+## Upstream and author
 
-## 上游项目
+[WeMD](https://github.com/tenngoxars/WeMD) provides the review editor. This repository retains minimal upstream metadata and license information; obtain the complete source upstream.
 
-- WeMD: <https://github.com/tenngoxars/WeMD>
+Maintained by [honestTai](https://github.com/honestTai). The workflow uses the model in your Codex environment. [HRouter](https://hrouter.net/home) is a separate model-routing service operated by the same author.
 
-本仓库只保留 WeMD 的最小元数据和许可证，完整源码请从上游获取。
+---
 
-## 作者与 HRouter · About the author
+<a id="project-activity"></a>
 
-我是 **honestTai**，开发工具，也运营 [HRouter](https://hrouter.net/home)。这里持续分享实用代码、AI 应用、Skills 与插件，把工作中的需求变成可复用的项目。  
-I’m **honestTai**, the developer and operator behind HRouter. I share practical code, AI apps, skills, and plugins built around real workflows.
+## Project activity
 
-此工作流使用你在 Codex 环境中的模型。HRouter 是我同时运营的模型路由服务，面向 AI 编程与应用开发。  
-This workflow uses the model in your Codex environment. HRouter is another part of my work: a model-routing service for AI coding and applications.
+Star / Fork totals and retained-event history, scheduled to refresh daily.
 
-[了解 HRouter · Explore HRouter](https://hrouter.net/home) · [发现更多项目 · More projects](https://github.com/honestTai)
+[![Star and Fork history for faliang-codex-ex](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/metrics/faliang-codex-ex.svg)](https://github.com/honestTai/honestTai/blob/main/data/README.md)
 
-**觉得有用，欢迎 Star；有想法，欢迎到 Issues 交流。**  
-**Star the project if it helps, and share your ideas in Issues.**
+[Observed daily totals](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/metrics/faliang-codex-ex-daily.svg) · [Methodology](https://github.com/honestTai/honestTai/blob/main/data/METHODOLOGY.md) · [All public projects](https://github.com/honestTai)
+
+<sub>Historical curves reconstruct currently retained stars and visible forks, not historical net totals. Separate daily observations start on 2026-10-06; no fabricated backfill.</sub>

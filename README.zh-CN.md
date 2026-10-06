@@ -1,0 +1,246 @@
+<div align="center">
+
+[English](README.md) · **简体中文**
+
+[HRouter](https://hrouter.net/home) · [All public projects](https://github.com/honestTai) · [Star & Fork trends](#project-activity)
+
+</div>
+
+[![Repository summary](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/badges/faliang-codex-ex.svg)](#project-activity)
+
+<div align="center">
+
+# WeChat Writing Workflow · 公众号写作工作流
+
+**从素材到公众号草稿，把写作流程接起来。**  
+**Connect the steps from source material to a WeChat draft.**
+
+[环境准备 / Setup](#环境准备) · [GitHub](https://github.com/honestTai/faliang-codex-ex) · [HRouter](https://hrouter.net/home)
+
+</div>
+
+让 Codex 帮你整理初稿，在 WeMD 中审稿与调整排版，确认后再通过微信官方接口创建草稿，减少来回复制与转换。
+
+Draft with Codex, review and format in WeMD, then create a draft through the official WeChat API after confirmation.
+
+**适合谁 / Who it’s for**  
+用 Codex 辅助写作、希望保留人工审稿与排版环节的公众号作者。  
+WeChat authors using Codex who want to keep human review and layout checks in the workflow.
+
+```text
+素材 -> Codex 初稿 -> 事实核验 -> 封面和配图 -> WeMD 审稿 -> HTML -> 公众号草稿箱
+```
+
+## 适合做什么
+
+- 从真实素材整理公众号初稿。
+- 用 WeMD 本地检查排版效果。
+- 把图片内联到 WeMD 审稿稿，减少图片丢失。
+- 生成带内联样式的公众号 HTML。
+- 通过微信官方 API 创建草稿箱草稿。
+
+这个仓库不提供选题素材，也不内置特定账号的内容模板。文章结构需要按内容类型选择：教程、工具介绍、案例复盘、观点文、活动说明、产品介绍都可以走同一条发布流水线，但不能套同一种写法。
+
+这个仓库只保留流程、脚本和提示词，不存放准备发布的文章稿件。要发布的草稿、WeMD 审稿稿和最终稿，放到 `codex-wemd-md2wechat-workflow` 这类实际写作仓库里。
+
+## 环境准备
+
+需要：
+
+- Node.js 20 或更高版本。
+- Codex。
+- WeMD 本地客户端。
+- 一个可以使用公众号草稿接口的微信公众号。
+
+克隆后安装依赖：
+
+```powershell
+npm install
+```
+
+复制配置文件：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+填写：
+
+```text
+WECHAT_APPID=
+WECHAT_SECRET=
+PUBLIC_ACCOUNT_AUTHOR=
+PUBLIC_ACCOUNT_SOURCE_URL=
+```
+
+`.env` 不要提交。微信接口还可能要求公众号权限、IP 白名单和已认证账号状态。
+
+## 目录结构
+
+```text
+articles/
+  drafts/          # Codex 写作和修改的草稿
+  wemd-inbox/      # 交给 WeMD 审稿的副本，图片会转成 data URI
+  approved/        # 人工确认后的最终 Markdown
+  approved-html/   # 生成或保存的公众号 HTML
+assets/
+  covers/          # 公众号封面图
+prompts/           # Codex、WeMD、发布阶段提示词
+scripts/           # 新建文章、交接 WeMD、渲染 HTML、预览、创建草稿
+workflow/          # 固定发布流水线和检查规则
+sources/WeMD/      # WeMD 上游元数据和许可证
+```
+
+## 使用步骤
+
+### 1. 准备素材
+
+一个选题一个目录。素材可以是笔记、采访记录、网页链接、产品说明、截图、数据表或你自己写的原始内容。
+
+不要让 Codex 凭空写事实。没有素材的地方，宁愿保留待补充。
+
+### 2. 创建草稿
+
+```powershell
+npm.cmd run article:new -- --title "文章标题" --slug article-slug
+```
+
+草稿会生成到：
+
+```text
+articles/drafts/article-slug.md
+```
+
+### 3. 让 Codex 写初稿
+
+把素材交给 Codex，让它按 `prompts/codex-writing.md` 和 `workflow/CONTENT_PIPELINE.md` 写稿。
+
+建议每次都明确三件事：
+
+- 这篇文章是什么类型。
+- 素材来自哪里。
+- 哪些内容必须核验，哪些内容不能编。
+
+### 4. 核验和补图
+
+检查标题、摘要、人物、时间、数据、产品能力、外部链接和截图含义。
+
+成稿前按 `humanizer-zh` 过一遍：删掉空词、模板化转折、机械总结和没有证据的判断。没有素材支撑的地方，不写成确定事实。
+
+封面放到：
+
+```text
+assets/covers/article-slug.jpg
+```
+
+正文图片可以先用相对路径引用。交给 WeMD 前，脚本会把本地图片转成 Markdown data URI。
+
+### 5. 交给 WeMD 审稿
+
+```powershell
+npm.cmd run handoff:wemd -- articles/drafts/article-slug.md
+```
+
+然后用 WeMD 打开：
+
+```text
+articles/wemd-inbox/article-slug.md
+```
+
+你在 WeMD 里检查排版、图片、段落和移动端阅读效果。
+
+### 6. 人工确认最终稿
+
+确认后，把最终 Markdown 放到：
+
+```text
+articles/approved/article-slug.md
+```
+
+只有 `articles/approved/` 下的稿件才允许进入公众号草稿箱流程。
+
+### 7. 生成公众号 HTML
+
+```powershell
+npm.cmd run render:wechat-html -- --article articles/approved/article-slug.md
+```
+
+输出：
+
+```text
+articles/approved-html/article-slug.html
+```
+
+脚本会生成带内联样式的 HTML，避免把裸 `<p>`、`<h2>`、`figure` 直接推到公众号。
+
+### 8. 预览检查
+
+```powershell
+npm.cmd run preview:wechat -- --article articles/approved/article-slug.md
+```
+
+这一步检查元数据、HTML 路径、摘要长度和图片数量。
+
+### 9. 创建公众号草稿箱草稿
+
+确认无误后再运行：
+
+```powershell
+npm.cmd run publish:draft -- --article articles/approved/article-slug.md --cover assets/covers/article-slug.jpg --confirmed
+```
+
+默认只创建草稿箱草稿，不群发。
+
+草稿创建后，还要进入公众号后台检查底部设置：原创声明、赞赏、留言、合集、原文链接、创作来源、平台推荐和快捷转载。
+
+## 常用命令
+
+```powershell
+npm.cmd run check
+npm.cmd run article:new -- --title "文章标题" --slug article-slug
+npm.cmd run handoff:wemd -- articles/drafts/article-slug.md
+npm.cmd run render:wechat-html -- --article articles/approved/article-slug.md
+npm.cmd run preview:wechat -- --article articles/approved/article-slug.md
+npm.cmd run publish:draft -- --article articles/approved/article-slug.md --cover assets/covers/article-slug.jpg --confirmed
+```
+
+## 安全边界
+
+- 未经人工确认，不从草稿目录创建公众号草稿。
+- `publish:draft` 只允许处理 `articles/approved/`。
+- 封面只允许来自 `assets/covers/`。
+- `.env`、token、接口响应日志、缓存和本地工具目录不提交。
+- 不接入第三方 Markdown 转公众号服务；正文 HTML 由本地脚本或 WeMD 产物进入官方接口。
+
+## 上游项目
+
+- WeMD: <https://github.com/tenngoxars/WeMD>
+
+本仓库只保留 WeMD 的最小元数据和许可证，完整源码请从上游获取。
+
+## 作者与 HRouter · About the author
+
+我是 **honestTai**，开发工具，也运营 [HRouter](https://hrouter.net/home)。这里持续分享实用代码、AI 应用、Skills 与插件，把工作中的需求变成可复用的项目。  
+I’m **honestTai**, the developer and operator behind HRouter. I share practical code, AI apps, skills, and plugins built around real workflows.
+
+此工作流使用你在 Codex 环境中的模型。HRouter 是我同时运营的模型路由服务，面向 AI 编程与应用开发。  
+This workflow uses the model in your Codex environment. HRouter is another part of my work: a model-routing service for AI coding and applications.
+
+[了解 HRouter · Explore HRouter](https://hrouter.net/home) · [发现更多项目 · More projects](https://github.com/honestTai)
+
+**觉得有用，欢迎 Star；有想法，欢迎到 Issues 交流。**  
+**Star the project if it helps, and share your ideas in Issues.**
+
+---
+
+<a id="project-activity"></a>
+
+## 项目动态 · Project activity
+
+当前 Star / Fork 数量与留存事件历史，计划每日更新。
+
+[![Star and Fork history for faliang-codex-ex](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/metrics/faliang-codex-ex.svg)](https://github.com/honestTai/honestTai/blob/main/data/README.md)
+
+[每日实测趋势](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/metrics/faliang-codex-ex-daily.svg) · [数据口径](https://github.com/honestTai/honestTai/blob/main/data/METHODOLOGY.zh-CN.md) · [全部公开项目](https://github.com/honestTai)
+
+<sub>历史曲线仅重建当前仍保留的 Star 与可见 Fork，并非过去每日净总量。每日实测总量自 2026-10-06 开始，不伪造回填。</sub>
