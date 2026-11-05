@@ -1,35 +1,31 @@
 <div align="center">
 
-**English** · [简体中文](README.zh-CN.md)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero.svg">
+  <img src="docs/assets/hero-light.svg" alt="faliang-codex-ex">
+</picture>
 
-[HRouter](https://hrouter.net/home) · [All public projects](https://github.com/honestTai) · [Star & Fork trends](#project-activity)
+**WeChat Writing Workflow.** Connect the steps from source material to a reviewed WeChat draft.
+
+[HRouter](https://hrouter.net/home) · [WeMD](https://github.com/tenngoxars/WeMD) · [All public projects](https://github.com/honestTai)
+
+**English** · [简体中文](README.zh-CN.md)
 
 </div>
 
-[![Repository summary](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/badges/faliang-codex-ex.svg)](#project-activity)
+## ❤️ Sponsor
 
-# WeChat Writing Workflow
+| Sponsor | What it is |
+| :--- | :--- |
+| [![HRouter](docs/assets/hrouter-sponsor.svg)](https://hrouter.net/home) | **[HRouter](https://hrouter.net/home)**: model access, API key management, and usage tracking for AI coding and application development. Also operated by the maintainer. |
 
-**Connect the steps from source material to a reviewed WeChat draft.**
+## 🚀 Quick start
 
-Draft with Codex, fact-check the content, review and format in WeMD, then create a draft through the official WeChat API **after human confirmation**. For WeChat Official Account authors who want to keep editorial and layout review in the workflow.
+You need Node.js 20+, Codex, the local WeMD client, and a WeChat Official Account with access to the draft API.
 
 ```text
 Sources → Codex draft → Fact-check → Cover and images → WeMD review → HTML → WeChat draft box
 ```
-
-## What this repository contains
-
-- Reusable workflows, scripts, and prompts for writing and review.
-- Local WeMD handoff with embedded images to reduce missing-image problems.
-- WeChat-ready HTML with inline styles.
-- Draft-box creation through the official WeChat API; **not a mass-publishing workflow**.
-
-This repository does not supply article topics, account-specific content templates, or articles waiting to be published. Keep real drafts and final articles in your own writing repository. Tutorials, tool introductions, retrospectives, opinion pieces, announcements, and product articles can share a pipeline, but should not share one rigid writing template.
-
-## Setup
-
-You need Node.js 20+, Codex, the local WeMD client, and a WeChat Official Account with access to the draft API.
 
 ```powershell
 npm install
@@ -47,96 +43,65 @@ PUBLIC_ACCOUNT_SOURCE_URL=
 
 Never commit `.env`. API access can also depend on account permissions, verification status, and an IP allowlist.
 
-## Workspace structure
-
-```text
-articles/
-  drafts/          # Drafts written and revised with Codex
-  wemd-inbox/      # Review copies with local images converted to data URIs
-  approved/        # Human-approved final Markdown
-  approved-html/   # Generated or saved WeChat HTML
-assets/
-  covers/          # Cover images
-prompts/           # Writing, review, and draft-publication prompts
-scripts/           # Article creation, handoff, rendering, preview, draft creation
-workflow/          # Pipeline and validation rules
-sources/WeMD/      # Upstream metadata and license
-```
-
-## From sources to draft box
-
-### 1. Gather real sources
-
-Use one source directory per topic: notes, interviews, links, screenshots, product information, or data. Mark gaps instead of inventing facts.
-
-### 2. Create and write a draft
-
 ```powershell
 npm.cmd run article:new -- --title "Article title" --slug article-slug
-```
-
-The file is created at `articles/drafts/article-slug.md`. Give Codex the sources and follow `prompts/codex-writing.md` and `workflow/CONTENT_PIPELINE.md`. State the article type, source provenance, and facts that must be checked.
-
-### 3. Fact-check and add images
-
-Verify the title, summary, names, dates, data, capability claims, links, and screenshot meaning. The workflow recommends a `humanizer-zh` pass for Chinese prose: remove filler and unsupported conclusions, without weakening factual accuracy.
-
-Place the cover at `assets/covers/article-slug.jpg`. Body images may use relative paths; handoff converts local images to data URIs.
-
-### 4. Review in WeMD
-
-```powershell
 npm.cmd run handoff:wemd -- articles/drafts/article-slug.md
-```
-
-Open `articles/wemd-inbox/article-slug.md` in WeMD. Check layout, images, paragraphs, and mobile readability.
-
-### 5. Approve, render, and preview
-
-After human approval, put the final Markdown in `articles/approved/article-slug.md`.
-
-```powershell
 npm.cmd run render:wechat-html -- --article articles/approved/article-slug.md
 npm.cmd run preview:wechat -- --article articles/approved/article-slug.md
-```
-
-HTML is written to `articles/approved-html/article-slug.html` with inline styles. Preview checks metadata, HTML paths, summary length, and image counts.
-
-### 6. Create the draft after confirmation
-
-```powershell
 npm.cmd run publish:draft -- --article articles/approved/article-slug.md --cover assets/covers/article-slug.jpg --confirmed
 ```
 
-This creates a draft, not a broadcast. Review the resulting draft in the Official Account backend, including originality, tips, comments, collections, source links, content provenance, recommendations, and reposting settings.
-
-## Checks and safety
+The file is created at `articles/drafts/article-slug.md`. Draft creation is restricted to `articles/approved/` and requires human confirmation. This creates a draft, not a broadcast.
 
 ```powershell
 npm.cmd run check
 ```
 
-- Draft creation is restricted to `articles/approved/` and requires human confirmation.
-- Covers must come from `assets/covers/`.
-- Do not commit secrets, tokens, API response logs, caches, or local tool directories.
-- No third-party Markdown-to-WeChat service is used; locally rendered or WeMD-produced HTML goes to the official API.
+## ✨ Features
 
-## Upstream and author
+| Feature | What this repository contains |
+| :--- | :--- |
+| Writing and review | Reusable workflows, scripts, and prompts for writing and review. |
+| WeMD handoff | Local WeMD handoff with embedded images to reduce missing-image problems. |
+| WeChat HTML | WeChat-ready HTML with inline styles. |
+| Draft box | Draft-box creation through the official WeChat API; **not a mass-publishing workflow**. |
+
+For WeChat Official Account authors who want to keep editorial and layout review in the workflow.
+
+This repository does not supply article topics, account-specific content templates, or articles waiting to be published. Keep real drafts and final articles in your own writing repository.
+
+## 📚 Docs
+
+- [Codex 写稿提示词](prompts/codex-writing.md)
+- [WeMD 审稿提示词](prompts/wemd-review.md)
+- [Codex + WeMD HTML + 微信官方接口发布提示词](prompts/wechat-publish.md)
+- [内容分流流水线](workflow/CONTENT_PIPELINE.md)
+- [完整工作流](workflow/WORKFLOW.md)
+- [公众号草稿底部设置](workflow/WECHAT_DRAFT_SETTINGS.md)
+- [Codex 版公众号主流程](workflow/CODEX_BLOGGER_WORKFLOW.md)
+- [上游元数据记录](workflow/SOURCES.md)
 
 [WeMD](https://github.com/tenngoxars/WeMD) provides the review editor. This repository retains minimal upstream metadata and license information; obtain the complete source upstream.
 
-Maintained by [honestTai](https://github.com/honestTai). The workflow uses the model in your Codex environment. [HRouter](https://hrouter.net/home) is a separate model-routing service operated by the same author.
+## 📄 License
+
+[MIT](LICENSE). Copyright (c) 2026 faliang.
+
+## 📈 Star history
+
+<a href="https://www.star-history.com/#honestTai/faliang-codex-ex&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=honestTai/faliang-codex-ex&type=Date&theme=dark">
+    <img src="https://api.star-history.com/svg?repos=honestTai/faliang-codex-ex&type=Date" alt="Star history of faliang-codex-ex">
+  </picture>
+</a>
 
 ---
 
-<a id="project-activity"></a>
+<div align="center">
 
-## Project activity
+Made by **[honestTai](https://github.com/honestTai)** · [HRouter](https://hrouter.net/home) · [More projects](https://github.com/honestTai)
 
-Star / Fork totals and retained-event history, scheduled to refresh daily.
+**Star the project if it helps, and share your ideas in Issues.**
 
-[![Star and Fork history for faliang-codex-ex](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/metrics/faliang-codex-ex.svg)](https://github.com/honestTai/honestTai/blob/main/data/README.md)
-
-[Observed daily totals](https://raw.githubusercontent.com/honestTai/honestTai/main/assets/metrics/faliang-codex-ex-daily.svg) · [Methodology](https://github.com/honestTai/honestTai/blob/main/data/METHODOLOGY.md) · [All public projects](https://github.com/honestTai)
-
-<sub>Historical curves reconstruct currently retained stars and visible forks, not historical net totals. Separate daily observations start on 2026-10-06; no fabricated backfill.</sub>
+</div>
